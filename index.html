@@ -1,465 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildSafe AI</title>
+<style>
+:root{--ink:#1d232b;--steel:#2f3b4a;--yellow:#f5b301;--paper:#f4f5f7;--card:#fff;--line:#d9dee5;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--mute:#5b6675}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5}
+nav{position:sticky;top:0;z-index:9;display:flex;gap:1.2rem;align-items:center;padding:.8rem 1.2rem;background:var(--ink);color:#fff;flex-wrap:wrap}
+nav b{margin-right:auto;font-size:1.1rem}nav a{color:#e5e7eb;text-decoration:none;font-size:.95rem}nav a:hover{color:var(--yellow)}
+.hero{background:var(--ink);color:#fff;padding:4rem 1.2rem 4.5rem;border-bottom:8px solid var(--yellow)}
+.wrap{max-width:960px;margin:0 auto}
+.hero h1{font-size:clamp(2rem,6vw,3.4rem);margin:.2rem 0 .8rem;line-height:1.1}.hero p{max-width:34rem;color:#cbd5e1}
+.btn{display:inline-block;border:0;cursor:pointer;background:var(--yellow);color:var(--ink);font-weight:700;padding:.7rem 1.2rem;border-radius:6px;text-decoration:none;font-size:1rem}
+.btn.alt{background:transparent;color:#fff;border:2px solid #64748b;margin-left:.5rem}.btn:disabled{opacity:.5;cursor:not-allowed}
+.badge{display:inline-block;margin-top:1.5rem;padding:.3rem .8rem;border-radius:99px;font-size:.85rem;background:#334155;color:#e2e8f0}
+.badge.ready{background:#14532d;color:#bbf7d0}.badge.fail{background:#7f1d1d;color:#fecaca}
+section{padding:3rem 1.2rem}h2{margin:0 0 .3rem;font-size:1.8rem}.sub{color:var(--mute);margin:0 0 1.5rem}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr 1fr}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.2rem}
+.drop{display:block;border:2px dashed #94a3b8;border-radius:8px;padding:1.6rem;text-align:center;cursor:pointer;color:var(--mute)}
+.drop:hover{border-color:var(--yellow)}.drop input{display:none}
+#preview{display:none;max-width:100%;max-height:260px;margin:.8rem auto 0;border-radius:6px}
+label.f{display:block;font-weight:600;margin:.8rem 0 .25rem;font-size:.92rem}
+input[type=number],select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;background:#fff}
+.res{min-height:11rem}.verdict{font-size:1.6rem;font-weight:800;margin:.2rem 0}
+.SAFE{color:var(--ok)}.NEEDS{color:var(--warn)}.HIGH{color:var(--bad)}
+.err{background:#fef2f2;border:1px solid #fecaca;color:var(--bad);padding:.8rem;border-radius:6px;font-weight:600}
+.bar{height:10px;background:#e5e7eb;border-radius:6px;overflow:hidden;margin:.3rem 0 .8rem}.bar i{display:block;height:100%;background:var(--yellow)}
+.steps{display:grid;gap:1rem;grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.steps{grid-template-columns:1fr 1fr}}
 
-    <title>BuildSafe AI</title>
-
-    <link rel="stylesheet" href="style.css">
+.steps .card{border-top:4px solid var(--yellow)}.steps h3{margin:.2rem 0}
+footer{background:var(--ink);color:#cbd5e1;padding:2rem 1.2rem;font-size:.9rem}
+small{color:var(--mute)}
+</style>
 </head>
-
 <body>
-
-    <!-- HEADER -->
-    <header class="header">
-        <div class="container nav">
-            <div class="logo">
-                🏗️ BuildSafe <span>AI</span>
-            </div>
-
-            <nav>
-                <a href="#home">Home</a>
-                <a href="#safety">Safety AI</a>
-                <a href="#planning">Project Planning</a>
-                <a href="#about">About</a>
-            </nav>
-        </div>
-    </header>
-
-
-    <!-- HERO -->
-    <section id="home" class="hero">
-        <div class="container hero-content">
-
-            <div class="hero-text">
-                <span class="badge">AI FOR CONSTRUCTION</span>
-
-                <h1>
-                    Smarter Construction.
-                    <span>Safer Projects.</span>
-                </h1>
-
-                <p>
-                    BuildSafe AI uses artificial intelligence to assess
-                    construction-site safety and predict project delay risk.
-                </p>
-
-                <div class="hero-buttons">
-                    <a href="#safety" class="btn primary">
-                        Try Safety AI
-                    </a>
-
-                    <a href="#planning" class="btn secondary">
-                        Predict Project Risk
-                    </a>
-                </div>
-            </div>
-
-            <div class="hero-card">
-                <div class="card-icon">🦺</div>
-
-                <h3>AI Safety Assessment</h3>
-
-                <p>
-                    Upload a construction-site image and let AI assess
-                    visible safety conditions.
-                </p>
-
-                <div class="status">
-                    <span class="status-dot"></span>
-                    AI System Ready
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- SAFETY AI -->
-    <section id="safety" class="section">
-        <div class="container">
-
-            <div class="section-heading">
-                <span class="badge">AI APPLICATION 01</span>
-
-                <h2>Construction Safety AI</h2>
-
-                <p>
-                    Upload a construction-site image to analyze visible
-                    safety conditions using AI.
-                </p>
-            </div>
-
-
-            <div class="safety-grid">
-
-                <!-- UPLOAD -->
-                <div class="panel">
-
-                    <h3>📷 Upload Construction Image</h3>
-
-                    <div class="upload-area" id="uploadArea">
-
-                        <div class="upload-icon">
-                            📤
-                        </div>
-
-                        <h4>Upload an Image</h4>
-
-                        <p>
-                            Drag & drop or select a construction-site image
-                        </p>
-
-                        <label for="imageInput" class="upload-btn">
-                            Choose Image
-                        </label>
-
-                        <input
-                            type="file"
-                            id="imageInput"
-                            accept="image/*"
-                            hidden
-                        >
-
-                        <small>
-                            JPG, JPEG, PNG or WEBP
-                        </small>
-
-                    </div>
-
-
-                    <!-- PREVIEW -->
-                    <div
-                        id="previewContainer"
-                        class="preview-container"
-                        style="display:none;"
-                    >
-
-                        <img
-                            id="imagePreview"
-                            src=""
-                            alt="Uploaded construction image"
-                        >
-
-                        <button
-                            id="removeImageBtn"
-                            type="button"
-                            class="remove-btn"
-                        >
-                            ✕ Remove Image
-                        </button>
-
-                    </div>
-
-
-                    <button
-                        id="analyzeBtn"
-                        type="button"
-                        class="analyze-btn"
-                        disabled
-                    >
-                        🔍 Analyze With AI
-                    </button>
-
-                </div>
-
-
-                <!-- RESULT -->
-                <div class="panel result-panel">
-
-                    <div class="assessment-title">
-                        <span>🤖</span>
-                        <div>
-                            <h3>AI ASSESSMENT</h3>
-                            <p>Computer vision safety analysis</p>
-                        </div>
-                    </div>
-
-
-                    <div
-                        id="safetyResult"
-                        class="safety-result"
-                    >
-
-                        <div class="waiting-icon">
-                            🔍
-                        </div>
-
-                        <h3>Waiting for Image</h3>
-
-                        <p>
-                            Upload a construction image and click
-                            "Analyze With AI".
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- PROJECT PLANNING -->
-    <section id="planning" class="section planning-section">
-
-        <div class="container">
-
-            <div class="section-heading">
-                <span class="badge">AI APPLICATION 02</span>
-
-                <h2>Project Delay Risk Prediction</h2>
-
-                <p>
-                    Enter project information to estimate delay risk
-                    and expected project duration.
-                </p>
-            </div>
-
-
-            <div class="planning-grid">
-
-                <div class="panel">
-
-                    <h3>📊 Project Information</h3>
-
-                    <form id="projectForm">
-
-                        <div class="form-group">
-                            <label for="duration">
-                                Planned Duration (days)
-                            </label>
-
-                            <input
-                                type="number"
-                                id="duration"
-                                min="1"
-                                value="120"
-                                required
-                            >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="workers">
-                                Number of Workers
-                            </label>
-
-                            <input
-                                type="number"
-                                id="workers"
-                                min="1"
-                                value="30"
-                                required
-                            >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="budget">
-                                Budget (₹ Lakhs)
-                            </label>
-
-                            <input
-                                type="number"
-                                id="budget"
-                                min="1"
-                                value="50"
-                                required
-                            >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="weather">
-                                Weather Risk
-                            </label>
-
-                            <select id="weather">
-                                <option value="1">Low</option>
-                                <option value="2">Medium</option>
-                                <option value="3">High</option>
-                            </select>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="material">
-                                Material Availability
-                            </label>
-
-                            <select id="material">
-                                <option value="3">Good</option>
-                                <option value="2">Moderate</option>
-                                <option value="1">Poor</option>
-                            </select>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="complexity">
-                                Project Complexity
-                            </label>
-
-                            <select id="complexity">
-                                <option value="1">Low</option>
-                                <option value="2">Medium</option>
-                                <option value="3">High</option>
-                            </select>
-                        </div>
-
-
-                        <button
-                            type="submit"
-                            class="analyze-btn"
-                        >
-                            📈 Predict Delay Risk
-                        </button>
-
-                    </form>
-
-                </div>
-
-
-                <!-- PROJECT RESULT -->
-                <div class="panel result-panel">
-
-                    <div class="assessment-title">
-                        <span>📊</span>
-
-                        <div>
-                            <h3>PROJECT RISK</h3>
-                            <p>AI-based planning assessment</p>
-                        </div>
-                    </div>
-
-
-                    <div
-                        id="projectResult"
-                        class="project-result"
-                    >
-
-                        <div class="waiting-icon">
-                            📊
-                        </div>
-
-                        <h3>Waiting for Project Data</h3>
-
-                        <p>
-                            Enter the project details and click
-                            "Predict Delay Risk".
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- HOW IT WORKS -->
-    <section id="about" class="section">
-
-        <div class="container">
-
-            <div class="section-heading">
-
-                <span class="badge">HOW IT WORKS</span>
-
-                <h2>AI-Powered Construction Intelligence</h2>
-
-                <p>
-                    BuildSafe AI follows a simple workflow from input
-                    to intelligent assessment.
-                </p>
-
-            </div>
-
-
-            <div class="steps">
-
-                <div class="step">
-                    <div class="step-number">01</div>
-                    <h3>Input</h3>
-                    <p>
-                        Upload a construction image or enter
-                        project information.
-                    </p>
-                </div>
-
-
-                <div class="step">
-                    <div class="step-number">02</div>
-                    <h3>AI Analysis</h3>
-                    <p>
-                        AI analyzes the image or evaluates
-                        project risk factors.
-                    </p>
-                </div>
-
-
-                <div class="step">
-                    <div class="step-number">03</div>
-                    <h3>Assessment</h3>
-                    <p>
-                        The system identifies safety conditions
-                        or delay risk.
-                    </p>
-                </div>
-
-
-                <div class="step">
-                    <div class="step-number">04</div>
-                    <h3>Decision Support</h3>
-                    <p>
-                        Results help teams identify potential
-                        problems early.
-                    </p>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- FOOTER -->
-    <footer>
-
-        <div class="container">
-
-            <h3>🏗️ BuildSafe AI</h3>
-
-            <p>
-                AI-powered construction safety and project planning prototype.
-            </p>
-
-            <p class="disclaimer">
-                ⚠️ This is an educational prototype. AI results should not
-                replace professional construction safety inspections.
-            </p>
-
-            <p class="copyright">
-                © 2026 BuildSafe AI
-            </p>
-
-        </div>
-
-    </footer>
-
-
-    <!-- IMPORTANT: type="module" -->
-    <script
-        type="module"
-        src="script.js"
-    ></script>
-
+<nav><b>🏗️ BuildSafe AI</b><a href="#home">Home</a><a href="#safety">Safety AI</a><a href="#planning">Project Planning</a><a href="#about">About</a></nav>
+
+<header class="hero" id="home"><div class="wrap">
+<h1>Smarter Construction. Safer Projects.</h1>
+<p>BuildSafe AI assesses construction-site safety from a photo and predicts project delay risk.</p>
+<a class="btn" href="#safety">Try Safety AI</a><a class="btn alt" href="#planning">Predict Project Risk</a><br>
+<span class="badge" id="status">Loading AI model… first load downloads about 100 MB</span>
+</div></header>
+
+<section id="safety"><div class="wrap">
+<h2>Construction Safety AI</h2><p class="sub">Upload a construction-site photo. Other kinds of photos are rejected.</p>
+<div class="grid">
+<div class="card">
+<label class="drop" for="file"><b>Choose an image</b><br><small>JPG, PNG or WEBP, up to 8 MB</small><input type="file" id="file" accept="image/jpeg,image/png,image/webp"></label>
+<img id="preview" alt="Uploaded image preview">
+<p><button class="btn" id="analyze" disabled>Analyze with AI</button></p>
+</div>
+<div class="card res" id="safetyOut"><p><small>Waiting for an image. Upload a construction-site photo and select Analyze with AI.</small></p></div>
+</div></div></section>
+
+<section id="planning" style="background:#fff"><div class="wrap">
+<h2>Project Delay Risk Prediction</h2><p class="sub">Enter project details to estimate delay risk and expected duration.</p>
+<div class="grid">
+<div class="card">
+<label class="f">Planned duration (days)</label><input type="number" id="dur" min="1" value="120">
+<label class="f">Number of workers</label><input type="number" id="wk" min="1" value="20">
+
+<label class="f">Budget (₹ Lakhs)</label><input type="number" id="bud" min="0.1" step="0.1" value="5">
+<label class="f">Weather risk</label><select id="wea"><option value="0">Low</option><option value="1">Medium</option><option value="2" selected>High</option></select>
+<label class="f">Material availability</label><select id="mat"><option value="0">Good</option><option value="1" selected>Moderate</option><option value="2">Poor</option></select>
+<label class="f">Project complexity</label><select id="com"><option value="0">Low</option><option value="1">Medium</option><option value="2" selected>High</option></select>
+<p><button class="btn" id="predict">Predict delay risk</button></p>
+</div>
+<div class="card res" id="planOut"><p><small>Enter the project details and select Predict delay risk.</small></p></div>
+</div></div></section>
+
+<section id="about"><div class="wrap">
+<h2>How it works</h2><p class="sub">Both models run in your browser. No images or project data are uploaded.</p>
+<div class="steps">
+<div class="card"><h3>Input</h3>Upload a site photo or enter project details.</div>
+<div class="card"><h3>AI analysis</h3>CLIP checks the photo; a Random Forest scores the project.</div>
+<div class="card"><h3>Assessment</h3>You get a safety level or a delay-risk estimate.</div>
+<div class="card"><h3>Decision support</h3>Results help teams spot problems early.</div>
+</div></div></section>
+
+<footer><div class="wrap">⚠️ Educational prototype. Results are decision-support only and do not replace professional construction safety inspections.<br>© 2026 BuildSafe AI</div></footer>
+
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+env.allowLocalModels = false;
+const $ = id => document.getElementById(id);
+const status = $('status');
+
+/* ---------- CLIP (zero-shot) ---------- */
+let clip = null;
+async function loadModel() {
+  try {
+    clip = await pipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32', {
+      progress_callback: p => { if (p.status === 'progress') status.textContent = `Loading AI model… ${Math.round(p.progress || 0)}%`; }
+
+    });
+    status.textContent = 'AI System Ready'; status.className = 'badge ready';
+    if (file) $('analyze').disabled = false;
+  } catch (e) {
+    console.error(e);
+    status.textContent = 'AI model could not be loaded: ' + (e.message || e) + '. Check your internet connection and open the site through its https:// GitHub Pages link.';
+    status.className = 'badge fail';
+  }
+}
+loadModel();
+
+// Step 1: is this a construction site at all?
+const GATE_YES = ['a construction site', 'a building under construction', 'construction workers at work', 'scaffolding and cranes at a building site'];
+const GATE_NO = ['a selfie or portrait of a person', 'a cat or a dog', 'a plate of food', 'a natural landscape with mountains or sea', 'a car on a road', 'the interior of a home', 'a screenshot or document', 'a cartoon or drawing', 'a group of people at a party', 'a finished modern building'];
+// Step 2: safety assessment (first two = safe, last two = risky)
+const SAFETY = ['construction workers wearing safety helmets and safety vests', 'a safe and well protected construction site', 'construction workers without proper safety equipment', 'an unsafe construction site'];
+
+let file = null;
+$('file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { showErr('Unsupported file type. Choose a JPG, PNG or WEBP image.'); return; }
+  if (f.size > 8 * 1024 * 1024) { showErr('The image is larger than 8 MB. Choose a smaller one.'); return; }
+  file = f;
+  const p = $('preview'); p.src = URL.createObjectURL(f); p.style.display = 'block';
+  $('safetyOut').innerHTML = '<p><small>Image ready. Select Analyze with AI.</small></p>';
+  $('analyze').disabled = !clip;
+});
+const showErr = m => { $('safetyOut').innerHTML = `<div class="err">${m}</div>`; };
+
+$('analyze').addEventListener('click', async () => {
+  if (!file || !clip) return;
+  $('analyze').disabled = true; $('safetyOut').innerHTML = '<p><small>Analyzing…</small></p>';
+
+  try {
+    const url = $('preview').src;
+    const gate = await clip(url, [...GATE_YES, ...GATE_NO], { hypothesis_template: 'a photo of {}' });
+    const yes = gate.filter(g => GATE_YES.includes(g.label)).reduce((a, g) => a + g.score, 0);
+    if (yes < 0.5) {
+      const top = gate[0].label;
+      showErr(`Not a construction-site image. This looks like: ${top}. Upload a photo of a construction site to continue.`);
+      return;
+    }
+    const r = await clip(url, SAFETY, { hypothesis_template: '{}' });
+    const sc = Object.fromEntries(r.map(x => [x.label, x.score]));
+    const safe = sc[SAFETY[0]] + sc[SAFETY[1]], risky = sc[SAFETY[2]] + sc[SAFETY[3]];
+    let level, cls, rec;
+    if (risky >= 0.6) { level = 'HIGH RISK'; cls = 'HIGH'; rec = 'Visible safety concerns detected. Stop work in the affected area, check PPE use and site protection, and have a safety officer inspect it.'; }
+    else if (safe >= 0.6) { level = 'SAFE'; cls = 'SAFE'; rec = 'No major visible hazards detected. Continue routine inspections.'; }
+    else { level = 'NEEDS ATTENTION'; cls = 'NEEDS'; rec = 'Mixed signals. Review PPE use and site protection and schedule an inspection.'; }
+    const top = r[0];
+    $('safetyOut').innerHTML = `<small>Construction-site check passed (${Math.round(yes * 100)}% confidence)</small>
+      <div class="verdict ${cls}">${level}</div>
+      <small>Safe-looking</small><div class="bar"><i style="width:${Math.round(safe * 100)}%"></i></div>
+      <small>Risk-looking</small><div class="bar"><i style="width:${Math.round(risky * 100)}%;background:#b91c1c"></i></div>
+      <p><b>Best match:</b> "${top.label}" (${Math.round(top.score * 100)}%)</p><p>${rec}</p>
+      <small>Visual estimate from a general-purpose model, not a PPE detector.</small>`;
+  } catch (e) {
+    console.error(e); showErr('Analysis failed: ' + (e.message || e));
+  } finally { $('analyze').disabled = false; }
+});
+
+/* ---------- Random Forest (trained in the browser on synthetic data) ---------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const gini = ys => { const p = ys.reduce((a, b) => a + b, 0) / ys.length; return 2 * p * (1 - p); };
+function build(X, y, idx, depth, rand, mf) {
+
+  const s = idx.reduce((a, i) => a + y[i], 0);
+  if (depth === 0 || idx.length < 6 || s === 0 || s === idx.length) return { p: s / idx.length };
+  const feats = [...Array(X[0].length).keys()].sort(() => rand() - .5).slice(0, mf);
+  let best = null;
+  for (const f of feats) {
+    const vals = [...new Set(idx.map(i => X[i][f]))].sort((a, b) => a - b);
+    const stepK = Math.max(1, Math.floor(vals.length / 12));
+    for (let k = 0; k < vals.length - 1; k += stepK) {
+      const th = (vals[k] + vals[k + 1]) / 2;
+      const L = idx.filter(i => X[i][f] <= th), Rr = idx.filter(i => X[i][f] > th);
+      if (!L.length || !Rr.length) continue;
+      const g = (L.length * gini(L.map(i => y[i])) + Rr.length * gini(Rr.map(i => y[i]))) / idx.length;
+      if (!best || g < best.g) best = { g, f, th, L, R: Rr };
+    }
+  }
+  if (!best) return { p: s / idx.length };
+  return { f: best.f, th: best.th, l: build(X, y, best.L, depth - 1, rand, mf), r: build(X, y, best.R, depth - 1, rand, mf) };
+}
+const walk = (t, x) => t.p !== undefined ? t.p : walk(x[t.f] <= t.th ? t.l : t.r, x);
+const clamp = v => Math.max(0, Math.min(1, v));
+
+const rand = rng(42), X = [], y = [];
+for (let i = 0; i < 800; i++) {          // synthetic training data
+  const d = 30 + rand() * 335, w = 5 + rand() * 95, b = 1 + rand() * 99;
+  const we = Math.floor(rand() * 3), ma = Math.floor(rand() * 3), co = Math.floor(rand() * 3);
+  const risk = .25 * we / 2 + .25 * ma / 2 + .3 * co / 2 + .2 * clamp(d / 365) - .15 * clamp(w / 100) - .05 * clamp(b / 100) + (rand() - .5) * .16;
+  X.push([d, w, b, we, ma, co]); y.push(risk > .45 ? 1 : 0);
+}
+const forest = Array.from({ length: 60 }, () => {
+  const idx = Array.from({ length: X.length }, () => Math.floor(rand() * X.length));
+  return build(X, y, idx, 6, rand, 3);
+});
+
+
+$('predict').addEventListener('click', () => {
+  const v = id => parseFloat($(id).value);
+  const x = [v('dur'), v('wk'), v('bud'), v('wea'), v('mat'), v('com')];
+  if (x.slice(0, 3).some(n => !(n > 0))) { $('planOut').innerHTML = '<div class="err">Enter duration, workers and budget as numbers greater than 0.</div>'; return; }
+  const prob = forest.reduce((a, t) => a + (walk(t, x) >= .5 ? 1 : 0), 0) / forest.length;
+  const high = prob >= .5, est = Math.round(x[0] * (1 + .5 * prob));
+  const rec = high ? 'High delay risk. Add buffer time, secure materials early, and plan for weather and complexity.' : 'Low delay risk. Keep monitoring weather and material supply.';
+  $('planOut').innerHTML = `<small>Predicted delay risk</small>
+    <div class="verdict ${high ? 'HIGH' : 'SAFE'}">${high ? 'HIGH' : 'LOW'}</div>
+    <small>Probability of high delay risk: ${Math.round(prob * 100)}%</small><div class="bar"><i style="width:${Math.round(prob * 100)}%"></i></div>
+    <p><b>Estimated duration:</b> about ${est} days (planned: ${x[0]})</p><p>${rec}</p>
+    <small>Trained on synthetic data for demonstration. Not a guaranteed outcome.</small>`;
+});
+</script>
 </body>
 </html>
