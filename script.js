@@ -711,3 +711,5 @@ if (uploadArea) {
 console.log(
     "BuildSafe AI loaded successfully."
 );
+window.analyzeSafety = analyzeSafety;
+window.removeImage = removeImage;
