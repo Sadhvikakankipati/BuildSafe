@@ -4,698 +4,462 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BuildSafe AI | Construction Intelligence</title>
+    <title>BuildSafe AI</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container nav">
+            <div class="logo">
+                🏗️ BuildSafe <span>AI</span>
+            </div>
 
-<nav class="navbar">
-
-    <div class="logo">
-        <span>🏗️</span>
-        BuildSafe <strong>AI</strong>
-    </div>
-
-    <div class="nav-links">
-        <a href="#home">Home</a>
-        <a href="#safety">Safety Monitoring</a>
-        <a href="#planning">Project Planning</a>
-        <a href="#about">About AI</a>
-    </div>
-
-</nav>
-
-
-<!-- ================= HERO ================= -->
-
-<section id="home" class="hero">
-
-    <div class="hero-content">
-
-        <span class="badge">AI FOR CONSTRUCTION</span>
-
-        <h1>
-            Build Safer.<br>
-            <span>Plan Smarter.</span>
-        </h1>
-
-        <p>
-            BuildSafe AI uses artificial intelligence to assess
-            construction-site safety and predict project delay risk.
-        </p>
-
-        <div class="hero-buttons">
-
-            <a href="#safety" class="btn primary">
-                Try Safety AI
-            </a>
-
-            <a href="#planning" class="btn secondary">
-                Plan Your Project
-            </a>
-
+            <nav>
+                <a href="#home">Home</a>
+                <a href="#safety">Safety AI</a>
+                <a href="#planning">Project Planning</a>
+                <a href="#about">About</a>
+            </nav>
         </div>
-
-    </div>
-
-    <div class="hero-card">
-
-        <div class="ai-circle">
-            🤖
-        </div>
-
-        <h3>AI-Powered Construction</h3>
-
-        <p>
-            Visual safety assessment and intelligent
-            project-risk analysis.
-        </p>
-
-        <div class="status">
-            <span></span> AI System Ready
-        </div>
-
-    </div>
-
-</section>
+    </header>
 
 
-<!-- ================= FEATURES ================= -->
+    <!-- HERO -->
+    <section id="home" class="hero">
+        <div class="container hero-content">
 
-<section class="features">
+            <div class="hero-text">
+                <span class="badge">AI FOR CONSTRUCTION</span>
 
-    <div class="section-heading">
-
-        <span class="small-title">WHAT WE DO</span>
-
-        <h2>Two AI-Powered Solutions</h2>
-
-        <p>
-            BuildSafe AI combines computer vision and
-            intelligent risk analysis for construction.
-        </p>
-
-    </div>
-
-    <div class="feature-grid">
-
-        <div class="feature-card">
-
-            <div class="feature-icon">🦺</div>
-
-            <h3>Safety Monitoring</h3>
-
-            <p>
-                Upload a construction-site image and use
-                AI-based visual analysis to identify
-                potential safety concerns.
-            </p>
-
-            <a href="#safety">Analyze Site →</a>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">📊</div>
-
-            <h3>Project Planning</h3>
-
-            <p>
-                Enter project characteristics and estimate
-                the risk of project delay.
-            </p>
-
-            <a href="#planning">Predict Risk →</a>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">🤖</div>
-
-            <h3>AI Decision Support</h3>
-
-            <p>
-                Convert construction data into simple,
-                actionable recommendations.
-            </p>
-
-            <a href="#about">Learn More →</a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= SAFETY ================= -->
-
-<section id="safety" class="section safety-section">
-
-    <div class="section-heading">
-
-        <span class="small-title">AI SAFETY MONITORING</span>
-
-        <h2>Analyze Construction-Site Safety</h2>
-
-        <p>
-            Upload an image of a construction site.
-            BuildSafe AI will analyze it using a
-            vision-language model.
-        </p>
-
-    </div>
-
-
-    <div class="safety-container">
-
-        <!-- Upload -->
-
-        <div class="upload-card">
-
-            <div id="dropArea" class="drop-area">
-
-                <div class="upload-icon">
-                    📷
-                </div>
-
-                <h3>Upload Construction Image</h3>
+                <h1>
+                    Smarter Construction.
+                    <span>Safer Projects.</span>
+                </h1>
 
                 <p>
-                    JPG, JPEG or PNG
+                    BuildSafe AI uses artificial intelligence to assess
+                    construction-site safety and predict project delay risk.
                 </p>
 
-                <input
-                    type="file"
-                    id="safetyImage"
-                    accept="image/*"
-                    hidden
-                >
+                <div class="hero-buttons">
+                    <a href="#safety" class="btn primary">
+                        Try Safety AI
+                    </a>
 
-                <button
-                    class="btn primary"
-                    onclick="document.getElementById('safetyImage').click()">
-
-                    Choose Image
-
-                </button>
-
+                    <a href="#planning" class="btn secondary">
+                        Predict Project Risk
+                    </a>
+                </div>
             </div>
 
+            <div class="hero-card">
+                <div class="card-icon">🦺</div>
 
-            <div id="imagePreviewContainer"
-                 class="image-preview-container hidden">
+                <h3>AI Safety Assessment</h3>
 
-                <img
-                    id="imagePreview"
-                    alt="Construction site preview"
-                >
+                <p>
+                    Upload a construction-site image and let AI assess
+                    visible safety conditions.
+                </p>
 
-                <button
-                    class="remove-image"
-                    onclick="removeImage()">
-
-                    ✕
-
-                </button>
-
-            </div>
-
-            <button id="analyzeBtn" type="button" onclick="analyzeSafety()">
-                🤖 Analyze With AI
-            </button>
-
-            <div id="modelStatus" class="model-status">
-                AI model will load when needed.
+                <div class="status">
+                    <span class="status-dot"></span>
+                    AI System Ready
+                </div>
             </div>
 
         </div>
+    </section>
 
 
-        <!-- Result -->
+    <!-- SAFETY AI -->
+    <section id="safety" class="section">
+        <div class="container">
 
-        <div class="result-card">
+            <div class="section-heading">
+                <span class="badge">AI APPLICATION 01</span>
 
-            <div class="result-header">
+                <h2>Construction Safety AI</h2>
 
-                <span>AI ASSESSMENT</span>
-
-                <div class="ai-dot"></div>
-
+                <p>
+                    Upload a construction-site image to analyze visible
+                    safety conditions using AI.
+                </p>
             </div>
 
 
-            <div id="safetyResult"
-                 class="safety-result">
+            <div class="safety-grid">
 
-                <div class="empty-result">
+                <!-- UPLOAD -->
+                <div class="panel">
 
-                    <div class="empty-icon">🔍</div>
+                    <h3>📷 Upload Construction Image</h3>
 
-                    <h3>Waiting for Image</h3>
+                    <div class="upload-area" id="uploadArea">
 
-                    <p>
-                        Upload a construction image and
-                        click "Analyze With AI".
-                    </p>
+                        <div class="upload-icon">
+                            📤
+                        </div>
 
-                </div>
+                        <h4>Upload an Image</h4>
 
-            </div>
+                        <p>
+                            Drag & drop or select a construction-site image
+                        </p>
 
-        </div>
+                        <label for="imageInput" class="upload-btn">
+                            Choose Image
+                        </label>
 
-    </div>
+                        <input
+                            type="file"
+                            id="imageInput"
+                            accept="image/*"
+                            hidden
+                        >
 
-</section>
+                        <small>
+                            JPG, JPEG, PNG or WEBP
+                        </small>
 
-
-<!-- ================= PLANNING ================= -->
-
-<section id="planning"
-         class="section planning-section">
-
-    <div class="section-heading">
-
-        <span class="small-title">
-            AI PROJECT PLANNING
-        </span>
-
-        <h2>Predict Project Delay Risk</h2>
-
-        <p>
-            Enter basic project information to estimate
-            potential delay risk.
-        </p>
-
-    </div>
-
-
-    <div class="planning-container">
-
-        <!-- FORM -->
-
-        <div class="planning-form">
-
-            <h3>Project Information</h3>
-
-            <div class="form-grid">
-
-                <div class="input-group">
-
-                    <label>
-                        Project Duration (days)
-                    </label>
-
-                    <input
-                        type="number"
-                        id="duration"
-                        value="120"
-                        min="1"
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        Number of Workers
-                    </label>
-
-                    <input
-                        type="number"
-                        id="workers"
-                        value="20"
-                        min="1"
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        Budget (₹)
-                    </label>
-
-                    <input
-                        type="number"
-                        id="budget"
-                        value="500000"
-                        min="1"
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        Weather Risk
-                        <span>1–10</span>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="weather"
-                        value="5"
-                        min="1"
-                        max="10"
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        Material Availability
-                        <span>1–10</span>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="material"
-                        value="7"
-                        min="1"
-                        max="10"
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label>
-                        Project Complexity
-                        <span>1–10</span>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="complexity"
-                        value="6"
-                        min="1"
-                        max="10"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="btn primary full-btn"
-                onclick="predictProject()">
-
-                📊 Predict Project Risk
-
-            </button>
-
-        </div>
-
-
-        <!-- RESULT -->
-
-        <div class="planning-result">
-
-            <div class="result-header">
-
-                <span>PROJECT AI ANALYSIS</span>
-
-            </div>
-
-
-            <div id="projectResult">
-
-                <div class="empty-result">
-
-                    <div class="empty-icon">
-                        📈
                     </div>
 
-                    <h3>No Prediction Yet</h3>
 
-                    <p>
-                        Enter project information and
-                        run the AI risk analysis.
-                    </p>
+                    <!-- PREVIEW -->
+                    <div
+                        id="previewContainer"
+                        class="preview-container"
+                        style="display:none;"
+                    >
+
+                        <img
+                            id="imagePreview"
+                            src=""
+                            alt="Uploaded construction image"
+                        >
+
+                        <button
+                            id="removeImageBtn"
+                            type="button"
+                            class="remove-btn"
+                        >
+                            ✕ Remove Image
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        id="analyzeBtn"
+                        type="button"
+                        class="analyze-btn"
+                        disabled
+                    >
+                        🔍 Analyze With AI
+                    </button>
+
+                </div>
+
+
+                <!-- RESULT -->
+                <div class="panel result-panel">
+
+                    <div class="assessment-title">
+                        <span>🤖</span>
+                        <div>
+                            <h3>AI ASSESSMENT</h3>
+                            <p>Computer vision safety analysis</p>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="safetyResult"
+                        class="safety-result"
+                    >
+
+                        <div class="waiting-icon">
+                            🔍
+                        </div>
+
+                        <h3>Waiting for Image</h3>
+
+                        <p>
+                            Upload a construction image and click
+                            "Analyze With AI".
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-
-    </div>
-
-</section>
+    </section>
 
 
-<!-- ================= HOW IT WORKS ================= -->
+    <!-- PROJECT PLANNING -->
+    <section id="planning" class="section planning-section">
 
-<section class="how-section">
+        <div class="container">
 
-    <div class="section-heading">
+            <div class="section-heading">
+                <span class="badge">AI APPLICATION 02</span>
 
-        <span class="small-title">
-            HOW IT WORKS
-        </span>
+                <h2>Project Delay Risk Prediction</h2>
 
-        <h2>From Data to Decision</h2>
-
-    </div>
-
-
-    <div class="process-grid">
-
-        <div class="process-card">
-
-            <div class="process-number">01</div>
-
-            <div class="process-icon">📷</div>
-
-            <h3>Input Data</h3>
-
-            <p>
-                Upload a construction image or enter
-                project information.
-            </p>
-
-        </div>
-
-
-        <div class="process-card">
-
-            <div class="process-number">02</div>
-
-            <div class="process-icon">🧠</div>
-
-            <h3>AI Analysis</h3>
-
-            <p>
-                AI processes visual or project data
-                to identify patterns.
-            </p>
-
-        </div>
-
-
-        <div class="process-card">
-
-            <div class="process-number">03</div>
-
-            <div class="process-icon">⚠️</div>
-
-            <h3>Risk Assessment</h3>
-
-            <p>
-                The system classifies safety or
-                project-delay risk.
-            </p>
-
-        </div>
-
-
-        <div class="process-card">
-
-            <div class="process-number">04</div>
-
-            <div class="process-icon">💡</div>
-
-            <h3>Recommendation</h3>
-
-            <p>
-                Users receive a simple actionable
-                recommendation.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= AI TECHNIQUES ================= -->
-
-<section id="about" class="section ai-section">
-
-    <div class="section-heading">
-
-        <span class="small-title">
-            ARTIFICIAL INTELLIGENCE
-        </span>
-
-        <h2>AI Techniques Used</h2>
-
-    </div>
-
-
-    <div class="ai-grid">
-
-        <div class="ai-card">
-
-            <div class="ai-card-icon">
-                👁️
+                <p>
+                    Enter project information to estimate delay risk
+                    and expected project duration.
+                </p>
             </div>
 
-            <h3>Computer Vision</h3>
 
-            <p>
-                The safety module uses a CLIP
-                vision-language model to compare
-                construction images with safety-related
-                descriptions.
-            </p>
+            <div class="planning-grid">
 
-            <div class="tech-flow">
-                Image → CLIP → Classification
+                <div class="panel">
+
+                    <h3>📊 Project Information</h3>
+
+                    <form id="projectForm">
+
+                        <div class="form-group">
+                            <label for="duration">
+                                Planned Duration (days)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="duration"
+                                min="1"
+                                value="120"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="workers">
+                                Number of Workers
+                            </label>
+
+                            <input
+                                type="number"
+                                id="workers"
+                                min="1"
+                                value="30"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="budget">
+                                Budget (₹ Lakhs)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="budget"
+                                min="1"
+                                value="50"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="weather">
+                                Weather Risk
+                            </label>
+
+                            <select id="weather">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="material">
+                                Material Availability
+                            </label>
+
+                            <select id="material">
+                                <option value="3">Good</option>
+                                <option value="2">Moderate</option>
+                                <option value="1">Poor</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="complexity">
+                                Project Complexity
+                            </label>
+
+                            <select id="complexity">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="analyze-btn"
+                        >
+                            📈 Predict Delay Risk
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- PROJECT RESULT -->
+                <div class="panel result-panel">
+
+                    <div class="assessment-title">
+                        <span>📊</span>
+
+                        <div>
+                            <h3>PROJECT RISK</h3>
+                            <p>AI-based planning assessment</p>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="projectResult"
+                        class="project-result"
+                    >
+
+                        <div class="waiting-icon">
+                            📊
+                        </div>
+
+                        <h3>Waiting for Project Data</h3>
+
+                        <p>
+                            Enter the project details and click
+                            "Predict Delay Risk".
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+    <section id="about" class="section">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <span class="badge">HOW IT WORKS</span>
+
+                <h2>AI-Powered Construction Intelligence</h2>
+
+                <p>
+                    BuildSafe AI follows a simple workflow from input
+                    to intelligent assessment.
+                </p>
+
+            </div>
+
+
+            <div class="steps">
+
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <h3>Input</h3>
+                    <p>
+                        Upload a construction image or enter
+                        project information.
+                    </p>
+                </div>
+
+
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <h3>AI Analysis</h3>
+                    <p>
+                        AI analyzes the image or evaluates
+                        project risk factors.
+                    </p>
+                </div>
+
+
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <h3>Assessment</h3>
+                    <p>
+                        The system identifies safety conditions
+                        or delay risk.
+                    </p>
+                </div>
+
+
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <h3>Decision Support</h3>
+                    <p>
+                        Results help teams identify potential
+                        problems early.
+                    </p>
+                </div>
+
             </div>
 
         </div>
 
+    </section>
 
-        <div class="ai-card">
 
-            <div class="ai-card-icon">
-                🌳
-            </div>
+    <!-- FOOTER -->
+    <footer>
 
-            <h3>Risk Prediction</h3>
+        <div class="container">
+
+            <h3>🏗️ BuildSafe AI</h3>
 
             <p>
-                The project-planning module evaluates
-                duration, workers, budget, weather,
-                material availability and complexity.
+                AI-powered construction safety and project planning prototype.
             </p>
 
-            <div class="tech-flow">
-                Project Data → Risk Model → Prediction
-            </div>
+            <p class="disclaimer">
+                ⚠️ This is an educational prototype. AI results should not
+                replace professional construction safety inspections.
+            </p>
+
+            <p class="copyright">
+                © 2026 BuildSafe AI
+            </p>
 
         </div>
 
-    </div>
+    </footer>
 
 
-    <div class="limitations">
-
-        <h3>⚠️ Important Limitations</h3>
-
-        <ul>
-
-            <li>
-                The visual model is a general-purpose
-                vision-language model, not a specialized
-                PPE detector.
-            </li>
-
-            <li>
-                Image quality, lighting and camera angle
-                can affect AI results.
-            </li>
-
-            <li>
-                Project-risk prediction is a prototype
-                and should not replace professional
-                project management.
-            </li>
-
-            <li>
-                Real-world deployment would require
-                domain-specific construction datasets
-                and validation.
-            </li>
-
-        </ul>
-
-    </div>
-
-</section>
-
-
-<!-- ================= CONCLUSION ================= -->
-
-<section class="conclusion">
-
-    <div class="conclusion-content">
-
-        <span class="small-title">
-            KEY TAKEAWAY
-        </span>
-
-        <h2>
-            AI can help construction teams
-            make faster, data-driven decisions.
-        </h2>
-
-        <p>
-            BuildSafe AI demonstrates how construction
-            images and project data can be converted
-            into useful safety and planning insights.
-        </p>
-
-        <a href="#safety" class="btn primary">
-            Try BuildSafe AI
-        </a>
-
-    </div>
-
-</section>
-
-
-<!-- ================= FOOTER ================= -->
-
-<footer>
-
-    <div class="footer-logo">
-        🏗️ BuildSafe AI
-    </div>
-
-    <p>
-        AI Applications in Construction
-    </p>
-
-    <p class="footer-small">
-        Educational prototype • GITAM University
-    </p>
-
-</footer>
-
-
-<!-- Transformers.js -->
-
-<script type="module" src="script.js"></script>
+    <!-- IMPORTANT: type="module" -->
+    <script
+        type="module"
+        src="script.js"
+    ></script>
 
 </body>
 </html>
