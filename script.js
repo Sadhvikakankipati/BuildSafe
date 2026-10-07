@@ -1,153 +1,103 @@
-import { pipeline, env } from
-    "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
-
-/*
-=========================================================
-BuildSafe AI
-GitHub Pages Version
-=========================================================
-
-Safety:
-CLIP zero-shot image classification
-
-Project Planning:
-Browser-based risk scoring prototype
-
-No Flask
-No Python
-No Render
-=========================================================
-*/
-
-
-// ======================================================
-// HUGGING FACE CONFIGURATION
-// ======================================================
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
 
 env.allowLocalModels = false;
 env.useBrowserCache = true;
 
-
-// ======================================================
-// GLOBAL VARIABLES
-// ======================================================
-
 let safetyClassifier = null;
+let selectedImage = null;
 let modelLoading = false;
 
+// ===============================
+// IMAGE UPLOAD
+// ===============================
 
-// ======================================================
-// IMAGE PREVIEW
-// ======================================================
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
+const previewContainer = document.getElementById("previewContainer");
+const uploadArea = document.getElementById("uploadArea");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const removeImageBtn = document.getElementById("removeImageBtn");
 
-const imageInput =
-    document.getElementById("safetyImage");
+if (imageInput) {
+    imageInput.addEventListener("change", handleImageUpload);
+}
 
-const imagePreview =
-    document.getElementById("imagePreview");
+if (removeImageBtn) {
+    removeImageBtn.addEventListener("click", removeImage);
+}
 
-const imagePreviewContainer =
-    document.getElementById(
-        "imagePreviewContainer"
-    );
+if (analyzeBtn) {
+    analyzeBtn.addEventListener("click", analyzeSafety);
+}
 
-const dropArea =
-    document.getElementById("dropArea");
+function handleImageUpload(event) {
+    const file = event.target.files[0];
 
-const analyzeButton =
-    document.getElementById(
-        "analyzeButton"
-    );
+    if (!file) return;
 
-
-// When user selects image
-imageInput.addEventListener(
-    "change",
-    function () {
-
-        const file = this.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        if (!file.type.startsWith("image/")) {
-
-            alert(
-                "Please select a valid image."
-            );
-
-            return;
-        }
-
-        const reader =
-            new FileReader();
-
-        reader.onload =
-            function (event) {
-
-                imagePreview.src =
-                    event.target.result;
-
-                imagePreviewContainer
-                    .classList
-                    .remove("hidden");
-
-                dropArea
-                    .classList
-                    .add("hidden");
-
-            };
-
-        reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+        showSafetyError(
+            "Invalid File",
+            "Please upload an image file such as JPG, JPEG, PNG or WEBP."
+        );
+        return;
     }
-);
 
+    selectedImage = file;
 
-// ======================================================
-// REMOVE IMAGE
-// ======================================================
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+
+        if (previewContainer) {
+            previewContainer.style.display = "block";
+        }
+
+        if (uploadArea) {
+            uploadArea.style.display = "none";
+        }
+
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+        }
+
+        clearSafetyResult();
+    };
+
+    reader.readAsDataURL(file);
+}
 
 function removeImage() {
+    selectedImage = null;
 
-    imageInput.value = "";
+    if (imageInput) {
+        imageInput.value = "";
+    }
 
-    imagePreview.src = "";
+    if (imagePreview) {
+        imagePreview.src = "";
+    }
 
-    imagePreviewContainer
-        .classList
-        .add("hidden");
+    if (previewContainer) {
+        previewContainer.style.display = "none";
+    }
 
-    dropArea
-        .classList
-        .remove("hidden");
+    if (uploadArea) {
+        uploadArea.style.display = "block";
+    }
 
-    document.getElementById(
-        "safetyResult"
-    ).innerHTML = `
+    if (analyzeBtn) {
+        analyzeBtn.disabled = true;
+    }
 
-        <div class="empty-result">
-
-            <div class="empty-icon">
-                🔍
-            </div>
-
-            <h3>Waiting for Image</h3>
-
-            <p>
-                Upload a construction image and
-                click "Analyze With AI".
-            </p>
-
-        </div>
-
-    `;
+    clearSafetyResult();
 }
 
 
-// ======================================================
+// ===============================
 // LOAD CLIP MODEL
-// ======================================================
+// ===============================
 
 async function loadSafetyModel() {
 
@@ -156,682 +106,428 @@ async function loadSafetyModel() {
     }
 
     if (modelLoading) {
-
-        while (modelLoading) {
-
-            await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        300
-                    )
-            );
-
-        }
-
-        return safetyClassifier;
+        return null;
     }
 
     modelLoading = true;
 
-    const status =
-        document.getElementById(
-            "modelStatus"
-        );
-
-    status.textContent =
-        "Loading AI model... This may take some time the first time.";
-
-    analyzeButton.disabled = true;
-
     try {
 
-        safetyClassifier =
-            await pipeline(
-                "zero-shot-image-classification",
-                "Xenova/clip-vit-base-patch32"
-            );
+        showSafetyLoading(
+            "Loading AI model...",
+            "The first analysis may take a little longer while the CLIP model downloads."
+        );
 
-        status.textContent =
-            "AI model ready.";
-
-        return safetyClassifier;
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        status.textContent =
-            "Unable to load AI model.";
-
-        throw error;
-
-    }
-
-    finally {
+        safetyClassifier = await pipeline(
+            "zero-shot-image-classification",
+            "Xenova/clip-vit-base-patch32"
+        );
 
         modelLoading = false;
 
-        analyzeButton.disabled = false;
+        return safetyClassifier;
 
+    } catch (error) {
+
+        modelLoading = false;
+
+        console.error("Model loading error:", error);
+
+        showSafetyError(
+            "AI Model Error",
+            "The AI model could not be loaded. Please check your internet connection and refresh the page."
+        );
+
+        return null;
     }
 }
 
 
-// ======================================================
+// ===============================
 // SAFETY ANALYSIS
-// ======================================================
+// ===============================
 
 async function analyzeSafety() {
 
-    const file = imageInput.files[0];
+    if (!selectedImage) {
 
-    if (!file) {
-        alert("Please upload a construction-site image first.");
+        showSafetyError(
+            "No Image Selected",
+            "Please upload a construction-site image first."
+        );
+
         return;
     }
 
-    const resultContainer =
-        document.getElementById("safetyResult");
-
-    resultContainer.innerHTML = `
-        <div class="empty-result">
-            <div class="empty-icon">🤖</div>
-            <h3>Checking Image...</h3>
-            <p>
-                AI is first checking whether this is a
-                construction-site image.
-            </p>
-        </div>
-    `;
-
     try {
+
+        if (analyzeBtn) {
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = "⏳ Analyzing...";
+        }
+
+        showSafetyLoading(
+            "Analyzing image...",
+            "AI is checking whether this is a construction image and assessing visible safety conditions."
+        );
 
         const classifier = await loadSafetyModel();
 
-        /*
-        =====================================================
-        STEP 1 — CHECK WHETHER IMAGE IS CONSTRUCTION RELATED
-        =====================================================
-        */
+        if (!classifier) {
+            return;
+        }
+
+        // ---------------------------------
+        // STEP 1: CHECK CONSTRUCTION IMAGE
+        // ---------------------------------
 
         const constructionLabels = [
-
-            "a construction site",
-            "a construction building site",
-            "construction workers at a building site",
-            "construction equipment at a construction site",
-            "an image unrelated to construction"
-
+            "a construction site with workers, buildings, machinery or construction materials",
+            "a non-construction image such as an animal, food, person, landscape or household object"
         ];
 
-        const constructionResults =
-            await classifier(
-                imagePreview.src,
-                constructionLabels
+        const constructionResults = await classifier(
+            imagePreview.src,
+            constructionLabels
+        );
+
+        console.log("Construction validation:", constructionResults);
+
+        const topConstructionResult = constructionResults[0];
+
+        const isConstruction =
+            topConstructionResult.label.includes("construction site");
+
+        // Reject non-construction images
+        if (!isConstruction) {
+
+            showSafetyError(
+                "Invalid Image",
+                "Please upload a construction-site image."
             );
 
-        const bestConstruction =
-            constructionResults[0];
-
-        /*
-        =====================================================
-        STEP 2 — REJECT NON-CONSTRUCTION IMAGES
-        =====================================================
-        */
-
-        const constructionScore =
-            constructionResults
-                .filter(item =>
-                    item.label !==
-                    "an image unrelated to construction"
-                )
-                .reduce(
-                    (sum, item) =>
-                        sum + item.score,
-                    0
-                );
-
-        const unrelatedResult =
-            constructionResults.find(
-                item =>
-                    item.label ===
-                    "an image unrelated to construction"
+            showSafetyMessage(
+                "The uploaded image does not appear to show a construction environment. Safety analysis is available only for construction-site images."
             );
-
-        const unrelatedScore =
-            unrelatedResult
-                ? unrelatedResult.score
-                : 0;
-
-
-        /*
-        A relatively strict threshold is used so that
-        obvious non-construction images are rejected.
-        */
-
-        if (
-            unrelatedScore > constructionScore ||
-            (
-                bestConstruction.score < 0.35 &&
-                unrelatedScore > 0.20
-            )
-        ) {
-
-            resultContainer.innerHTML = `
-
-                <div class="empty-result">
-
-                    <div class="empty-icon">
-                        🚫
-                    </div>
-
-                    <h3>
-                        Invalid Image
-                    </h3>
-
-                    <p>
-                        Please upload a construction-site
-                        image.
-                    </p>
-
-                    <div class="recommendation">
-
-                        <strong>
-                            ⚠️ Image Not Supported
-                        </strong>
-
-                        <p>
-                            The uploaded image does not appear
-                            to show a construction environment.
-                            Safety analysis is available only
-                            for construction-site images.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `;
 
             return;
         }
 
-
-        /*
-        =====================================================
-        STEP 3 — CONSTRUCTION IMAGE CONFIRMED
-        =====================================================
-        */
-
-        resultContainer.innerHTML = `
-
-            <div class="empty-result">
-
-                <div class="empty-icon">
-                    🏗️
-                </div>
-
-                <h3>
-                    Construction Image Detected
-                </h3>
-
-                <p>
-                    Running construction safety analysis...
-                </p>
-
-            </div>
-
-        `;
-
-
-        /*
-        =====================================================
-        STEP 4 — SAFETY CLASSIFICATION
-        =====================================================
-        */
+        // ---------------------------------
+        // STEP 2: SAFETY ANALYSIS
+        // ---------------------------------
 
         const safetyLabels = [
 
-            "construction workers wearing safety helmets and safety vests",
+            "construction workers wearing proper safety helmets and safety vests",
 
             "construction workers without proper safety equipment",
 
             "an unsafe construction site",
 
-            "a safe and well protected construction site"
+            "a safe and well protected construction site",
+
+            "a construction site that needs safety attention"
 
         ];
 
-
-        const safetyResults =
-            await classifier(
-                imagePreview.src,
-                safetyLabels
-            );
-
-
-        displaySafetyResult(
-            safetyResults
+        showSafetyLoading(
+            "Construction site detected ✓",
+            "Now analyzing the visible safety conditions..."
         );
 
-    }
-
-    catch (error) {
-
-        console.error(
-            "Safety analysis error:",
-            error
+        const safetyResults = await classifier(
+            imagePreview.src,
+            safetyLabels
         );
 
-        resultContainer.innerHTML = `
+        console.log("Safety results:", safetyResults);
 
-            <div class="empty-result">
+        displaySafetyResult(safetyResults);
 
-                <div class="empty-icon">
-                    ⚠️
-                </div>
+    } catch (error) {
 
-                <h3>
-                    Analysis Error
-                </h3>
+        console.error("Safety analysis error:", error);
 
-                <p>
-                    The image could not be analyzed.
-                    Please try another construction-site
-                    image.
-                </p>
+        showSafetyError(
+            "Analysis Error",
+            "Something went wrong while analyzing the image. Please refresh the page and try again."
+        );
 
-            </div>
+    } finally {
 
-        `;
-
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = "🔍 Analyze Safety";
+        }
     }
-
 }
 
 
-// ======================================================
+// ===============================
 // DISPLAY SAFETY RESULT
-// ======================================================
+// ===============================
 
 function displaySafetyResult(results) {
 
-    const container =
-        document.getElementById(
-            "safetyResult"
-        );
-
-
     if (!results || results.length === 0) {
 
-        container.innerHTML = `
-
-            <div class="empty-result">
-                <h3>No Result</h3>
-            </div>
-
-        `;
+        showSafetyError(
+            "No Result",
+            "The AI could not classify this image."
+        );
 
         return;
     }
 
+    const best = results[0];
 
-    const best =
-        results[0];
+    let status = "NEEDS ATTENTION";
+    let icon = "⚠️";
+    let message =
+        "Some visible safety conditions may require attention.";
 
-
-    const label =
-        best.label.toLowerCase();
-
-
-    let status =
-        "NEEDS ATTENTION";
-
-    let statusClass =
-        "medium-risk";
-
-    let recommendation =
-        "A further safety inspection is recommended.";
-
+    const label = best.label.toLowerCase();
 
     if (
-        label.includes("without") ||
+        label.includes("without proper") ||
         label.includes("unsafe")
     ) {
 
-        status =
-            "HIGH RISK";
+        status = "HIGH RISK";
+        icon = "🚨";
 
-        statusClass =
-            "high-risk";
+        message =
+            "The AI detected visible indicators associated with an unsafe construction environment.";
 
-        recommendation =
-            "Immediate safety inspection recommended. Review PPE, fall protection and site safety controls.";
-
-    }
-
-    else if (
-        label.includes("wearing") ||
-        label.includes("safe")
+    } else if (
+        label.includes("wearing proper") ||
+        label.includes("safe and well")
     ) {
 
-        status =
-            "SAFE";
+        status = "SAFE";
+        icon = "✅";
 
-        statusClass =
-            "safe-risk";
-
-        recommendation =
-            "Visible safety conditions appear acceptable, but routine inspection should continue.";
+        message =
+            "The AI detected visible indicators of safer construction practices.";
 
     }
 
+    const confidence = Math.round(best.score * 100);
 
-    const confidence =
-        best.score * 100;
+    let resultHTML = `
+        <div class="result-card">
 
-
-    let bars = "";
-
-
-    results.forEach(
-        function (item) {
-
-            const percentage =
-                item.score * 100;
-
-            bars += `
-
-                <div class="label-item">
-
-                    <div class="label-name">
-
-                        <span>
-                            ${item.label}
-                        </span>
-
-                        <strong>
-                            ${percentage.toFixed(1)}%
-                        </strong>
-
-                    </div>
-
-                    <div class="mini-bar">
-
-                        <div
-                            class="mini-fill"
-                            style="width:${percentage}%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    container.innerHTML = `
-
-        <div class="risk-result">
-
-            <div class="risk-badge ${statusClass}">
-                ${status}
+            <div class="result-icon">
+                ${icon}
             </div>
 
-            <h3>
-                AI Safety Assessment
-            </h3>
+            <h3>${status}</h3>
 
-            <p>
-                Most likely interpretation:
-            </p>
-
-            <strong>
-                ${best.label}
-            </strong>
-
+            <p>${message}</p>
 
             <div class="confidence">
+                <strong>AI Confidence: ${confidence}%</strong>
 
-                <div>
-                    AI Confidence:
-                    <strong>
-                        ${confidence.toFixed(2)}%
-                    </strong>
-                </div>
-
-                <div class="confidence-bar">
-
+                <div class="progress-bar">
                     <div
-                        class="confidence-fill"
-                        style="width:${confidence}%">
-                    </div>
+                        class="progress-fill"
+                        style="width:${confidence}%"
+                    ></div>
+                </div>
+            </div>
 
+            <h4>AI Classification</h4>
+    `;
+
+    results.forEach(result => {
+
+        const score = Math.round(result.score * 100);
+
+        resultHTML += `
+            <div class="classification-row">
+
+                <div class="classification-label">
+                    <span>${result.label}</span>
+                    <strong>${score}%</strong>
+                </div>
+
+                <div class="progress-bar">
+                    <div
+                        class="progress-fill"
+                        style="width:${score}%"
+                    ></div>
                 </div>
 
             </div>
+        `;
+    });
 
-
-            <div class="recommendation">
-
-                <strong>
-                    Recommendation
-                </strong>
-
-                <p>
-                    ${recommendation}
-                </p>
-
-            </div>
-
-
-            <div class="label-list">
-
-                <strong>
-                    AI Classification Scores
-                </strong>
-
-                <br><br>
-
-                ${bars}
-
+    resultHTML += `
+            <div class="ai-note">
+                <strong>Note:</strong>
+                This is an AI-based visual assessment prototype.
+                It should not replace professional construction-site safety inspection.
             </div>
 
         </div>
-
     `;
 
+    const resultContainer =
+        document.getElementById("safetyResult");
+
+    if (resultContainer) {
+        resultContainer.innerHTML = resultHTML;
+        resultContainer.style.display = "block";
+    }
 }
 
 
-// ======================================================
-// PROJECT PLANNING
-// ======================================================
+// ===============================
+// SAFETY UI HELPERS
+// ===============================
 
-function predictProject() {
+function showSafetyLoading(title, message) {
+
+    const resultContainer =
+        document.getElementById("safetyResult");
+
+    if (!resultContainer) return;
+
+    resultContainer.style.display = "block";
+
+    resultContainer.innerHTML = `
+        <div class="result-card">
+
+            <div class="result-icon">🤖</div>
+
+            <h3>${title}</h3>
+
+            <p>${message}</p>
+
+            <div class="loading-spinner"></div>
+
+        </div>
+    `;
+}
+
+function showSafetyError(title, message) {
+
+    const resultContainer =
+        document.getElementById("safetyResult");
+
+    if (!resultContainer) return;
+
+    resultContainer.style.display = "block";
+
+    resultContainer.innerHTML = `
+        <div class="result-card error-result">
+
+            <div class="result-icon">🚫</div>
+
+            <h3>${title}</h3>
+
+            <p>${message}</p>
+
+        </div>
+    `;
+}
+
+function showSafetyMessage(message) {
+
+    const resultContainer =
+        document.getElementById("safetyResult");
+
+    if (!resultContainer) return;
+
+    resultContainer.innerHTML += `
+        <p class="safety-message">
+            ${message}
+        </p>
+    `;
+}
+
+function clearSafetyResult() {
+
+    const resultContainer =
+        document.getElementById("safetyResult");
+
+    if (resultContainer) {
+        resultContainer.innerHTML = "";
+        resultContainer.style.display = "none";
+    }
+}
+
+
+// ===============================
+// PROJECT DELAY PREDICTION
+// ===============================
+
+const projectForm =
+    document.getElementById("projectForm");
+
+if (projectForm) {
+    projectForm.addEventListener(
+        "submit",
+        predictProject
+    );
+}
+
+function predictProject(event) {
+
+    event.preventDefault();
 
     const duration =
-        Number(
-            document.getElementById(
-                "duration"
-            ).value
-        );
+        Number(document.getElementById("duration").value);
 
     const workers =
-        Number(
-            document.getElementById(
-                "workers"
-            ).value
-        );
+        Number(document.getElementById("workers").value);
 
     const budget =
-        Number(
-            document.getElementById(
-                "budget"
-            ).value
-        );
+        Number(document.getElementById("budget").value);
 
     const weather =
-        Number(
-            document.getElementById(
-                "weather"
-            ).value
-        );
+        Number(document.getElementById("weather").value);
 
     const material =
-        Number(
-            document.getElementById(
-                "material"
-            ).value
-        );
+        Number(document.getElementById("material").value);
 
     const complexity =
-        Number(
-            document.getElementById(
-                "complexity"
-            ).value
-        );
-
-
-    // ==================================================
-    // VALIDATION
-    // ==================================================
-
-    if (
-        duration <= 0 ||
-        workers <= 0 ||
-        budget <= 0
-    ) {
-
-        alert(
-            "Please enter valid project values."
-        );
-
-        return;
-    }
-
-
-    if (
-        weather < 1 ||
-        weather > 10 ||
-        material < 1 ||
-        material > 10 ||
-        complexity < 1 ||
-        complexity > 10
-    ) {
-
-        alert(
-            "Weather, material availability and complexity must be between 1 and 10."
-        );
-
-        return;
-    }
-
-
-    /*
-    =====================================================
-    PROJECT RISK SCORING
-
-    This is a browser-based prototype.
-
-    Higher values:
-    - Weather risk
-    - Complexity
-
-    Lower material availability:
-    - increases risk
-
-    Very long projects:
-    - increase risk
-
-    Very small workforce for a long project:
-    - increases risk
-    =====================================================
-    */
-
+        Number(document.getElementById("complexity").value);
 
     let riskScore = 0;
 
-
-    // Duration contribution
-
+    // Duration
     if (duration > 180) {
-
         riskScore += 10;
-
-    }
-
-    else if (duration > 120) {
-
+    } else if (duration > 120) {
         riskScore += 7;
-
-    }
-
-    else if (duration > 60) {
-
+    } else if (duration > 60) {
         riskScore += 4;
-
     }
 
-
-    // Worker contribution
-
-    if (
-        workers < 10 &&
-        duration > 120
-    ) {
-
+    // Workers
+    if (workers < 10 && duration > 120) {
         riskScore += 6;
-
-    }
-
-    else if (workers < 15) {
-
+    } else if (workers < 15) {
         riskScore += 3;
-
     }
 
-
-    // Budget contribution
-
+    // Budget
     if (budget < 250000) {
-
         riskScore += 5;
-
-    }
-
-    else if (budget < 500000) {
-
+    } else if (budget < 500000) {
         riskScore += 3;
-
     }
 
-
-    // Weather contribution
-
-    riskScore +=
-        weather * 1.5;
-
+    // Weather
+    riskScore += weather * 1.5;
 
     // Material availability
-
-    riskScore +=
-        (10 - material) * 1.5;
-
+    riskScore += (10 - material) * 1.5;
 
     // Complexity
-
-    riskScore +=
-        complexity * 1.5;
-
-
-    // Normalize approximately
+    riskScore += complexity * 1.5;
 
     let probability =
         Math.min(
@@ -842,233 +538,176 @@ function predictProject() {
             )
         );
 
-
-    let highRisk =
+    const highRisk =
         probability >= 50;
 
-
-    let riskText =
+    const estimatedDuration =
         highRisk
-            ? "HIGH DELAY RISK"
-            : "LOW DELAY RISK";
+            ? Math.round(duration * 1.15)
+            : Math.round(duration * 1.03);
 
-
-    let riskClass =
-        highRisk
-            ? "high"
-            : "low";
-
-
-    // Estimated duration
-
-    let estimatedDuration;
-
-
-    if (highRisk) {
-
-        estimatedDuration =
-            Math.round(
-                duration * 1.15
-            );
-
-    }
-
-    else {
-
-        estimatedDuration =
-            Math.round(
-                duration * 1.03
-            );
-
-    }
-
-
-    // Recommendation
-
+    let status;
+    let icon;
     let recommendation;
 
-
     if (highRisk) {
 
-        recommendation =
-            "Consider additional resources, better material planning, weather contingency and closer project monitoring.";
-
-    }
-
-    else {
+        status = "HIGH DELAY RISK";
+        icon = "🚨";
 
         recommendation =
-            "Project conditions appear relatively manageable. Continue monitoring resources, materials and weather.";
+            "Consider increasing resources, improving material availability, and preparing for weather-related disruptions.";
 
+    } else {
+
+        status = "LOW DELAY RISK";
+        icon = "✅";
+
+        recommendation =
+            "The project currently shows relatively low delay risk. Continue monitoring resources, materials and weather.";
     }
 
+    const resultContainer =
+        document.getElementById("projectResult");
 
-    displayProjectResult(
-        riskText,
-        riskClass,
-        probability,
-        estimatedDuration,
-        recommendation
-    );
+    if (!resultContainer) return;
 
-}
+    resultContainer.style.display = "block";
 
+    resultContainer.innerHTML = `
 
-// ======================================================
-// DISPLAY PROJECT RESULT
-// ======================================================
+        <div class="result-card">
 
-function displayProjectResult(
-    riskText,
-    riskClass,
-    probability,
-    estimatedDuration,
-    recommendation
-) {
-
-    const container =
-        document.getElementById(
-            "projectResult"
-        );
-
-
-    container.innerHTML = `
-
-        <div class="project-result">
-
-            <div class="project-risk ${riskClass}">
-                ${riskText}
+            <div class="result-icon">
+                ${icon}
             </div>
 
-            <div class="project-probability">
+            <h3>${status}</h3>
 
-                Estimated risk probability:
-                <strong>
-                    ${probability.toFixed(1)}%
-                </strong>
+            <p>
+                Estimated probability of project delay:
+                <strong>${Math.round(probability)}%</strong>
+            </p>
 
-            </div>
+            <p>
+                Estimated project duration:
+                <strong>${estimatedDuration} days</strong>
+            </p>
 
+            <div class="confidence">
 
-            <div class="project-stats">
+                <strong>Delay Risk</strong>
 
-                <div class="stat">
+                <div class="progress-bar">
 
-                    <strong>
-                        ${estimatedDuration}
-                    </strong>
-
-                    <span>
-                        Estimated Days
-                    </span>
-
-                </div>
-
-
-                <div class="stat">
-
-                    <strong>
-                        ${probability.toFixed(0)}%
-                    </strong>
-
-                    <span>
-                        Delay Risk
-                    </span>
+                    <div
+                        class="progress-fill"
+                        style="width:${probability}%"
+                    ></div>
 
                 </div>
 
             </div>
 
+            <div class="ai-note">
 
-            <div class="recommendation">
+                <strong>Recommendation:</strong><br>
 
-                <strong>
-                    AI Recommendation
-                </strong>
+                ${recommendation}
 
-                <p>
-                    ${recommendation}
-                </p>
+            </div>
+
+            <div class="ai-note">
+
+                <strong>Prototype note:</strong>
+                This prediction uses a rule-based AI prototype
+                for demonstration purposes and is not a
+                production project-management model.
 
             </div>
 
         </div>
-
     `;
-
 }
 
 
-// ======================================================
+// ===============================
 // DRAG AND DROP
-// ======================================================
+// ===============================
 
-const dropZone =
-    document.getElementById(
-        "dropArea"
+if (uploadArea) {
+
+    uploadArea.addEventListener(
+        "dragover",
+        function (event) {
+
+            event.preventDefault();
+
+            uploadArea.classList.add("drag-over");
+        }
     );
 
+    uploadArea.addEventListener(
+        "dragleave",
+        function () {
 
-dropZone.addEventListener(
-    "dragover",
-    function (event) {
-
-        event.preventDefault();
-
-        dropZone.style.borderColor =
-            "#5d8f35";
-
-    }
-);
-
-
-dropZone.addEventListener(
-    "dragleave",
-    function () {
-
-        dropZone.style.borderColor =
-            "#cbd7c5";
-
-    }
-);
-
-
-dropZone.addEventListener(
-    "drop",
-    function (event) {
-
-        event.preventDefault();
-
-        dropZone.style.borderColor =
-            "#cbd7c5";
-
-
-        const files =
-            event.dataTransfer.files;
-
-
-        if (
-            files.length > 0 &&
-            files[0].type.startsWith("image/")
-        ) {
-
-            imageInput.files =
-                files;
-
-            imageInput.dispatchEvent(
-                new Event("change")
-            );
-
+            uploadArea.classList.remove("drag-over");
         }
+    );
 
-    }
-);
+    uploadArea.addEventListener(
+        "drop",
+        function (event) {
 
+            event.preventDefault();
 
-// ======================================================
-// INITIAL MESSAGE
-// ======================================================
+            uploadArea.classList.remove("drag-over");
+
+            const file =
+                event.dataTransfer.files[0];
+
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+
+                showSafetyError(
+                    "Invalid File",
+                    "Please upload an image file."
+                );
+
+                return;
+            }
+
+            selectedImage = file;
+
+            const reader =
+                new FileReader();
+
+            reader.onload = function (e) {
+
+                imagePreview.src =
+                    e.target.result;
+
+                if (previewContainer) {
+                    previewContainer.style.display =
+                        "block";
+                }
+
+                uploadArea.style.display =
+                    "none";
+
+                if (analyzeBtn) {
+                    analyzeBtn.disabled = false;
+                }
+
+                clearSafetyResult();
+            };
+
+            reader.readAsDataURL(file);
+        }
+    );
+}
 
 console.log(
-    "BuildSafe AI initialized successfully."
+    "BuildSafe AI loaded successfully."
 );
