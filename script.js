@@ -198,70 +198,43 @@ if (removeImageBtn) {
 // =====================================================
 // LOAD AI MODEL
 // =====================================================
-
 async function loadSafetyModel() {
-
     if (safetyClassifier) {
-
         return safetyClassifier;
-
     }
-
-
-    if (modelLoading) {
-
-        return null;
-
-    }
-
 
     try {
-
-        modelLoading = true;
-
         showSafetyLoading(
-            "Loading AI model...",
-            "The first analysis may take a few minutes."
+            "Loading AI Model...",
+            "Downloading the computer-vision model. This may take a few minutes the first time."
         );
 
-
-        console.log("Loading CLIP model...");
-
+        console.log("Starting CLIP model loading...");
 
         safetyClassifier = await pipeline(
             "zero-shot-image-classification",
-            "Xenova/clip-vit-base-patch32"
+            "Xenova/clip-vit-base-patch32",
+            {
+                device: "wasm"
+            }
         );
 
-
-        console.log("CLIP model loaded successfully.");
-
-        modelLoading = false;
+        console.log("✅ CLIP model loaded successfully.");
 
         return safetyClassifier;
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
-        console.error(
-            "Model loading error:",
-            error
-        );
-
-        modelLoading = false;
+        console.error("❌ CLIP MODEL ERROR:", error);
 
         showSafetyError(
             "AI Model Error",
-            "The AI model could not be loaded. Please refresh the page and try again."
+            "The AI model could not be loaded. Check the browser console (F12) for the exact error."
         );
 
         return null;
-
     }
-
 }
-
 
 // =====================================================
 // ANALYZE SAFETY
